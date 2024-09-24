@@ -131,7 +131,7 @@
     <jacoco.home.url>http://www.jacoco.org/jacoco</jacoco.home.url>
     <copyright.years>${project.inceptionYear}, 2024</copyright.years>
 
-    <bytecode.version>1.5</bytecode.version>
+    <bytecode.version>17</bytecode.version>
     <maven.compiler.source>${bytecode.version}</maven.compiler.source>
     <maven.compiler.target>${bytecode.version}</maven.compiler.target>
 
@@ -152,8 +152,8 @@
     <sonar.surefire.reportsPath>../${project.artifactId}.test/target/surefire-reports/</sonar.surefire.reportsPath>
 
     <!-- See http://jira.codehaus.org/browse/SONAR-2096 -->
-    <sonar.java.source>1.5</sonar.java.source>
-    <sonar.java.target>1.5</sonar.java.target>
+    <sonar.java.source>17</sonar.java.source>
+    <sonar.java.target>17</sonar.java.target>
   </properties>
 
   <dependencyManagement>

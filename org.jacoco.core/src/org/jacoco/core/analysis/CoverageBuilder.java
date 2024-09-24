@@ -12,11 +12,7 @@
  *******************************************************************************/
 package org.jacoco.core.analysis;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.jacoco.core.internal.analysis.BundleCoverageImpl;
 import org.jacoco.core.internal.analysis.ClassCoverageImpl;
@@ -42,6 +38,14 @@ public class CoverageBuilder implements ICoverageVisitor {
 	private final Map<String, IClassCoverage> classes;
 
 	private Map<String, ISourceFileCoverage> sourcefiles;
+
+	public static List<String> methodNames = Collections.emptyList();
+
+	public CoverageBuilder(String diffFile) {
+		this.classes = new HashMap<String, IClassCoverage>();
+		this.sourcefiles = new HashMap<String, ISourceFileCoverage>();
+		methodNames = Arrays.asList(diffFile.split("%"));
+	}
 
 	/**
 	 * Create a new builder.

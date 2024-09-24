@@ -12,10 +12,13 @@
  *******************************************************************************/
 package org.jacoco.core.internal.flow;
 
+import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.internal.instr.InstrSupport;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.AnalyzerAdapter;
+
+import java.util.List;
 
 /**
  * A {@link org.objectweb.asm.ClassVisitor} that calculates probes for every
@@ -35,6 +38,7 @@ public class ClassProbesAdapter extends ClassVisitor
 
 	private String name;
 
+	private String className;
 	/**
 	 * Creates a new adapter that delegates to the given visitor.
 	 *
@@ -50,6 +54,15 @@ public class ClassProbesAdapter extends ClassVisitor
 		this.trackFrames = trackFrames;
 	}
 
+	public ClassProbesAdapter(final ClassProbesVisitor cv,
+							  final boolean trackFrames, String className) {
+		super(InstrSupport.ASM_API_VERSION, cv);
+		this.cv = cv;
+		this.trackFrames = trackFrames;
+		this.className = className;
+
+	}
+
 	@Override
 	public void visit(final int version, final int access, final String name,
 			final String signature, final String superName,
@@ -60,17 +73,52 @@ public class ClassProbesAdapter extends ClassVisitor
 
 	@Override
 	public final MethodVisitor visitMethod(final int access, final String name,
-			final String desc, final String signature,
-			final String[] exceptions) {
+										   final String desc, final String signature,
+										   final String[] exceptions) {
 		final MethodProbesVisitor methodProbes;
 		final MethodProbesVisitor mv = cv.visitMethod(access, name, desc,
 				signature, exceptions);
-		if (mv == null) {
+		boolean isInRule = CoverageBuilder.methodNames.stream()
+				.anyMatch(line -> {
+					String ruleClassName = line.split(":")[0];
+
+					if (!ruleClassName.contains(className)) {
+						return false;
+					}
+					List<String> ruleMethodNameAndParamList = List
+							.of(line.split(":")[1].split("#"));
+					return ruleMethodNameAndParamList.stream()
+							.anyMatch(ruleMethodNameAndParam -> {
+										String[] split = ruleMethodNameAndParam
+												.split(",");
+
+										boolean methodNameMatch = name.equals(split[0]);
+										if (!methodNameMatch) {
+											return false;
+										}
+										int hitCount = 0;
+										for (int i = 1; i < split.length; i++) {
+											if (desc.contains(split[i])) {
+												hitCount++;
+											}
+										}
+										if (hitCount == split.length - 1) {
+											return true;
+										}
+										return false;
+
+									}
+
+							);
+
+				});
+
+		if (mv != null && isInRule) {
+			methodProbes = mv;
+		} else {
 			// We need to visit the method in any case, otherwise probe ids
 			// are not reproducible
 			methodProbes = EMPTY_METHOD_PROBES_VISITOR;
-		} else {
-			methodProbes = mv;
 		}
 		return new MethodSanitizer(null, access, name, desc, signature,
 				exceptions) {

@@ -66,6 +66,9 @@ public class Report extends Command {
 	@Option(name = "--xml", usage = "output file for the XML report", metaVar = "<file>")
 	File xml;
 
+	@Option(name = "--diffFile", usage = "传一个差异方法的字符串", metaVar = "<diffFile>")
+	String diffFile;
+
 	@Option(name = "--csv", usage = "output file for the CSV report", metaVar = "<file>")
 	File csv;
 
