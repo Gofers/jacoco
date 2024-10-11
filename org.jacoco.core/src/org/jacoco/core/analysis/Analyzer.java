@@ -33,6 +33,7 @@ import org.jacoco.core.internal.analysis.StringPool;
 import org.jacoco.core.internal.data.CRC64;
 import org.jacoco.core.internal.flow.ClassProbesAdapter;
 import org.jacoco.core.internal.instr.InstrSupport;
+import org.jacoco.core.internal.instr.ProbeArrayStrategyFactory;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
@@ -80,7 +81,8 @@ public class Analyzer {
 	 */
 	private ClassVisitor createAnalyzingVisitor(final long classid,
 			final String className) {
-		final ExecutionData data = executionData.get(classid);
+		ExecutionData data = executionData.get(classid);
+
 		final boolean[] probes;
 		final boolean noMatch;
 		if (data == null) {
@@ -100,7 +102,7 @@ public class Analyzer {
 				coverageVisitor.visitCoverage(coverage);
 			}
 		};
-		return new ClassProbesAdapter(analyzer, false,className);
+		return new ClassProbesAdapter(analyzer, false, className);
 	}
 
 	private void analyzeClass(final byte[] source) {

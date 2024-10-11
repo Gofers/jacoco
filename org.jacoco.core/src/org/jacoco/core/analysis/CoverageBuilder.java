@@ -44,7 +44,10 @@ public class CoverageBuilder implements ICoverageVisitor {
 	public CoverageBuilder(String diffFile) {
 		this.classes = new HashMap<String, IClassCoverage>();
 		this.sourcefiles = new HashMap<String, ISourceFileCoverage>();
-		methodNames = Arrays.asList(diffFile.split("%"));
+		if (diffFile != null) {
+			methodNames = Arrays.asList(diffFile.split("%"));
+		}
+
 	}
 
 	/**

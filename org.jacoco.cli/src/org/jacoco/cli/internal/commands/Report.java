@@ -107,7 +107,7 @@ public class Report extends Command {
 
 	private IBundleCoverage analyze(final ExecutionDataStore data,
 			final PrintWriter out) throws IOException {
-		final CoverageBuilder builder = new CoverageBuilder();
+		final CoverageBuilder builder = new CoverageBuilder(diffFile);
 		final Analyzer analyzer = new Analyzer(data, builder);
 		for (final File f : classfiles) {
 			analyzer.analyzeAll(f);
